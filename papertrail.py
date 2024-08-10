@@ -11,6 +11,16 @@ def home():
     return render_template('home.html')
 
 
+@app.route('/subject', methods=["GET", "POST"])
+def subject():
+    form = SubjectForm()
+    if form.validate_on_submit():
+        flash("Subjects has been saved", "success")
+        return redirect(url_for('home'))
+                        
+    return render_template("subject.html", title="Subjects", form=form)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -21,6 +31,7 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template("login.html", title="Login", form=form)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
