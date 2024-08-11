@@ -15,8 +15,11 @@ def home():
 def subject():
     form = SubjectForm()
     if form.validate_on_submit():
-        flash("Subjects has been saved", "success")
-        return redirect(url_for('home'))
+        if form.validate_subject():
+            flash("Subjects has been saved", "success")
+            return redirect(url_for('home'))
+        else:  # subjects are the same
+            flash('Subjects must be different', 'danger')
                         
     return render_template("subject.html", title="Subjects", form=form)
 
