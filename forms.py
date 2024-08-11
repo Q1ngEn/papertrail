@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectMultipleField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectMultipleField, DecimalField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -15,14 +15,12 @@ class RegistrationForm(FlaskForm):
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
-
 class LoginForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Log In')
-
 
 class SubjectForm(FlaskForm):
     subjects = [('h2math', 'H2 Math'), ('h2phy', 'H2 Physics'), ('h2chem', 'H2 Chemistry'), ('h2bio', 'H2 Biology'),
@@ -44,3 +42,9 @@ class SubjectForm(FlaskForm):
                 seen.add(field.data)
         return result
     submit = SubmitField('Save changes')
+
+class DepositForm(FlaskForm):
+    amount = DecimalField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=1000)])
+    description = TextAreaField('Description')
+    
+    submit = SubmitField('Make Deposit')
