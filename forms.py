@@ -34,8 +34,6 @@ class SubjectForm(FlaskForm):
     subject_4 = SelectField(choices=subjects)
 
     def validate_subject(self):
-        if not super().validate(self):
-            return False
         result = True
         seen = set()
         for field in [self.subject_1, self.subject_2, self.subject_3, self.subject_4]:
