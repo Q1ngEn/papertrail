@@ -7,10 +7,25 @@ class RegistrationForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
+    cg = StringField('Enter you CG (XX/XX)', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
+
+    def validate_cg(self, field):  # validate cg
+        result = True
+        if len(self.cg.data) != 5:
+            result = False
+            self.cg.errors.append("Invalid Length.")
+        elif not self.cg.data[:2].isdigit():
+            result = False
+            self.cg.errors.append("Invalid format.")
+        elif not self.cg.data[3:].isdigit():
+            result = False
+            self.cg.errors.append("Invalid format.")
+
+        return result
 
 
 class LoginForm(FlaskForm):
