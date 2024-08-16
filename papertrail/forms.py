@@ -71,3 +71,11 @@ class DepositForm(FlaskForm):
     submit = SubmitField('Make Deposit')
     
 
+class ChargeForm(FlaskForm):
+    subjects = [('h2math', 'H2 Math'), ('h2phy', 'H2 Physics'), ('h2chem', 'H2 Chemistry'), ('h2bio', 'H2 Biology'),
+                ('h2com', 'H2 Computing'), ('h2econ', 'H2 Economics'), ('h1econ', 'H1 Economics')]
+    category = SelectField(choices=subjects)
+    amount = DecimalField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=50)])
+    description = TextAreaField('Description')
+    
+    submit = SubmitField('Withdraw')
