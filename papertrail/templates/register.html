@@ -32,6 +32,48 @@
                         {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <!-- class group -->
+                <div class="form-group">
+                    {{ form.cg.label(class="form-control-label") }}
+                    {% if form.cg.errors %}
+                        {{ form.cg(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.cg.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.cg(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <!-- role -->
+				<div class="form-group">
+                    {{ form.role.label(class="form-control-label") }}
+                    {% if form.role.errors %}
+                        {{ form.role(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.role.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.role(class="form-control form-control-lg", id="role") }}
+                    {% endif %}
+                </div>
+                <!-- validate role -->
+				<div class="form-group" id='leader-pass' style="display: none">
+                    {{ form.leader_password.label(class="form-control-label") }}
+                    {% if form.leader_password.errors %}
+                        {{ form.leader_password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.leader_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.leader_password(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}
                     {% if form.password.errors %}
