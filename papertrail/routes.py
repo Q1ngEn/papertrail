@@ -56,3 +56,14 @@ def register():
             flash(f"Account created for {form.username.data}!", "success")
             return redirect(url_for('home'))
     return render_template("register.html", title="Register", form=form)
+
+
+@app.route('/charge', methods=['GET', 'POST'])
+def charge():
+    global balance
+    form = ChargeForm()
+    if form.validate_on_submit():
+        balance -= form.amount.data
+        flash("Transaction Completed", "success")
+        return redirect(url_for("home"))
+    return render_template('charge.html', title='Charge', form=form)
