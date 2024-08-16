@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DecimalField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, NoneOf, NumberRange
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, ValidationError
+from papertrail.models import Student
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -8,16 +9,14 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     cg = StringField('Enter you CG (XX/XX)', validators=[DataRequired()])
-    # class role
     role = SelectField('Role', choices=[('stu', 'Student'), ('lead', 'Class Leader')], id='role')
-    # validate whether they are a class leader
-    leader_password = PasswordField("Enter leader code", validators=[DataRequired()])
+    leader_password = PasswordField("Enter leader code")
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
-    def validate_cg(self, field):  # validate cg
+    def validate_cg(self, field):
         result = True
         if len(self.cg.data) != 5:
             result = False
@@ -31,6 +30,17 @@ class RegistrationForm(FlaskForm):
 
         return result
 
+    # check if username exists
+    def validate_username(self, username):
+        user = Student.query.filter_by(name=username.data).first()
+        if user:
+            raise ValidationError('That username is taken please choose anthor')
+        
+    # check if email already exists
+    def validate_email(self, email):
+        user = Student.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('That email is taken please choose another')
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -68,7 +78,7 @@ class DepositForm(FlaskForm):
     amount = DecimalField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=1000)])
     description = TextAreaField('Description')
     
-    submit = SubmitField('Make Deposit')
+    submit = SubmitField('Deposit')
     
 
 class ChargeForm(FlaskForm):
