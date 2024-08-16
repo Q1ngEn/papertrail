@@ -111,4 +111,19 @@
             Already Have An Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
         </small>
     </div>
+
+    <!-- make leader_password only appear when class leader is selected -->
+	<script>
+	    window.onload = function() {
+		var roleElement = document.getElementById('role');
+		    document.getElementById('role').addEventListener('change', function() {
+		    var leaderPass = document.getElementById('leader-pass');
+		    if (this.value == 'lead') {
+			leaderPass.style.display = 'block';
+		    } else {
+			leaderPass.style.display = 'none';
+		    }
+		});
+	    };
+	</script>
 {% endblock content %}
