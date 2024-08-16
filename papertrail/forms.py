@@ -8,6 +8,10 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     cg = StringField('Enter you CG (XX/XX)', validators=[DataRequired()])
+    # class role
+    role = SelectField('Role', choices=[('stu', 'Student'), ('lead', 'Class Leader')], id='role')
+    # validate whether they are a class leader
+    leader_password = PasswordField("Enter leader code", validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
