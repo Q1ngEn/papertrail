@@ -1,7 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DecimalField, TextAreaField
+from flask_login import current_user
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SelectMultipleField, FloatField, TextAreaField, widgets
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, ValidationError
-from papertrail.models import Student
+from papertrail import app, db
+from papertrail.models import Student, Subject, StudentSubject
+
+
+with app.app_context():
+    db.create_all()
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -41,6 +48,7 @@ class RegistrationForm(FlaskForm):
         user = Student.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken please choose another')
+
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -83,17 +91,24 @@ class SubjectForm(FlaskForm):
 
 
 class DepositForm(FlaskForm):
-    amount = DecimalField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=1000)])
+    title = StringField('Title', validators=[DataRequired()])
+    amount = FloatField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=1000)])
     description = TextAreaField('Description')
     
     submit = SubmitField('Deposit')
     
 
 class ChargeForm(FlaskForm):
-    subjects = [('h2math', 'H2 Math'), ('h2phy', 'H2 Physics'), ('h2chem', 'H2 Chemistry'), ('h2bio', 'H2 Biology'),
-                ('h2com', 'H2 Computing'), ('h2econ', 'H2 Economics'), ('h1econ', 'H1 Economics')]
-    category = SelectField(choices=subjects)
-    amount = DecimalField('Amount Deposit:', validators=[DataRequired(), NumberRange(min=0, max=50)])
+    with app.app_context():
+        subjects = Subject.query.all()
+    subject_options = []
+
+    # loop through every subject option
+    for subject in subjects:
+        subject_options.append((subject.subj_abreviation, subject.subj_name))
+
+    category = SelectField(choices=subject_options)
+    title = StringField('Title', validators=[DataRequired()])
+    amount = FloatField('Amount Charge:', validators=[DataRequired(), NumberRange(min=0, max=50)])
     description = TextAreaField('Description')
-    
     submit = SubmitField('Withdraw')
