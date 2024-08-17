@@ -1,17 +1,26 @@
 from flask import Flask, render_template, url_for, redirect, request, flash
 from papertrail import app, db, bcrypt
-from papertrail.models import Student, Subject, StudentSubject
+from papertrail.models import Student, Subject, StudentSubject, Transaction, StudentTransaction
 from papertrail.forms import RegistrationForm, LoginForm, SubjectForm, DepositForm, ChargeForm
 from flask_login import login_user, current_user, logout_user, login_required
 
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
     if current_user.is_authenticated:  # user is logged in
         balance = current_user.balance
+        transactions = current_user.transaction_recieved
+        recent_transactions = []
+        
+        for transaction in transactions:
+            transaction_now = Transaction.query.filter_by(id=transaction.transaction_id).first()
+            recent_transactions.append([transaction_now.title, transaction_now.category, transaction_now.amount, transaction_now.date])
     else:
         balance = 0
-    return render_template('home.html', balance=balance)
+        recent_transactions = []
+    return render_template('home.html', balance=balance, recent_transactions=recent_transactions)
 
 
 @app.route('/subject', methods=["GET", "POST"])
@@ -144,16 +153,27 @@ def register():
 @app.route('/charge', methods=['GET', 'POST'])
 @login_required  # user needs to be logged in
 def charge():
-    student = Student.query.filter_by(current_user.id).first()
-    balance = student.balance
-
     form = ChargeForm()
     if form.validate_on_submit():
-        balance -= form.amount.data
-
-        # update database balance
-        student.balance = balance
+        # add transaction into transaction table
+        transaction = Transaction(author_id=current_user.id, title=form.title.data, category=form.category.data,
+                                  amount=form.amount.data, description=form.description.data)
+        db.session.add(transaction)
         db.session.commit()
+        # find list of class
+        subject_selected = Subject.query.filter_by(subj_abreviation=form.category.data).first()
+        students = subject_selected.students
+
+        for stu_id in students:
+            # check if cg match with user
+            student = Student.query.filter_by(id=int(stu_id.stu_id)).first()
+            if student.cg == current_user.cg:
+                # add them to the student_transaction table
+                student_transaction = StudentTransaction(stu_id=student.id, transaction_id=transaction.id)
+                db.session.add(student_transaction)
+                # update their balance
+                student.balance -= form.amount.data
+                db.session.commit()
 
         flash("Transaction Completed", "success")
         return redirect(url_for("home"))
