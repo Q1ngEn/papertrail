@@ -51,13 +51,21 @@ class LoginForm(FlaskForm):
 
 
 class SubjectForm(FlaskForm):
-    subjects = [('h2math', 'H2 Math'), ('h2phy', 'H2 Physics'), ('h2chem', 'H2 Chemistry'), ('h2bio', 'H2 Biology'),
-                ('h2com', 'H2 Computing'), ('h2econ', 'H2 Economics'), ('h1econ', 'H1 Economics')]
+    with app.app_context():
+        subjects = Subject.query.all()
+    subject_options = []
     
-    subject_1 = SelectField(choices=subjects)
-    subject_2 = SelectField(choices=subjects)
-    subject_3 = SelectField(choices=subjects)
-    subject_4 = SelectField(choices=subjects)
+    # loop through every subject option
+    for subject in subjects:
+        # check if it is not mtl or gp
+        if subject.subj_abreviation not in ['h1cl', 'h1ml', 'h1tl', 'h1gp']:
+            subject_options.append((subject.subj_abreviation, subject.subj_name))
+    
+    subject_1 = SelectField(choices=subject_options)
+    subject_2 = SelectField(choices=subject_options)
+    subject_3 = SelectField(choices=subject_options)
+    subject_4 = SelectField(choices=subject_options)
+    h1mtl = SelectField("H1 Mother Tounge", choices=[('na', 'NA'), ('h1cl', 'H1 Chinese'), ('h1ml', 'H1 Malay'), ('h1tl', 'H1 Tamil')])
 
     def validate_subject(self):
         result = True
