@@ -41,19 +41,4 @@ class StudentSubject(db.Model):
         return f"StudentSubject('{self.stu_id}', '{self.subj_id}')"
 
      
-# add subjects to database
-subjects = [['h1bio', 'H1 Biology'], ['h1chem', 'H1 Chemistry'], ['h1cl', 'H1 Chinese'], ['h1econs', 'H1 Economics'],
-            ['h1gp', 'H1 General Paper'], ['h1geo', 'H1 Geography'], ['h1hist', 'H1 History'], ['h1elit', 'H1 English Literature'],
-            ['h1ml', 'H1 Malay'], ['h1math', 'H1 Math'], ['h1phy', 'H1 Physics'], ['h1tl', 'H1 Tamil'], ['h2art', 'H2 Art'],
-            ['h2bio', 'H2 Biology'], ['h2chem', 'H2 Chemistry'], ['h2clit', 'H2 Chinese Literature'], ['h2comp', 'H2 Computing'],
-            ['h2econs', 'H2 Economics'], ['h2fm', 'H2 Further Math'], ['h2geo', 'H2 Geography'], ['h2hist', 'H2 History'],
-            ['h2elit', 'H2 English Literature'], ['h2mlit', 'H2 Malay Literature'], ['h2math', 'H2 Math'], ['h2phy', 'H2 Physics'], ['h2tlit', 'H2 Tamil Literature']]
-
-# add and create database
-with app.app_context():
-    db.create_all()
-    for subject in subjects:
-        row = Subject(subj_abreviation=subject[0], subj_name=subject[1])
-        db.session.add(row)
-    db.session.commit()
      
