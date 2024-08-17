@@ -61,7 +61,21 @@
                         {{ form.subject_4(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-			</fieldset>
+		<div class="form-group">
+                    {{ form.h1mtl.label(class="form-control-label") }}
+
+                    {% if form.h1mtl.errors %}
+                        {{ form.h1mtl(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.h1mtl.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.h1mtl(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+		</fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
