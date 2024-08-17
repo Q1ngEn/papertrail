@@ -17,9 +17,50 @@ def home():
 @app.route('/subject', methods=["GET", "POST"])
 @login_required  # user needs to be logged in
 def subject():
+    # check if subject is in database
+    subject_test = Subject.query.first()
+    if not subject_test:  # subjects are not in database
+        subjects_data = [['h1bio', 'H1 Biology'], ['h1chem', 'H1 Chemistry'], ['h1cl', 'H1 Chinese'], ['h1econs', 'H1 Economics'],
+            ['h1gp', 'H1 General Paper'], ['h1geo', 'H1 Geography'], ['h1hist', 'H1 History'], ['h1elit', 'H1 English Literature'],
+            ['h1ml', 'H1 Malay'], ['h1math', 'H1 Math'], ['h1phy', 'H1 Physics'], ['h1tl', 'H1 Tamil'], ['h2art', 'H2 Art'],
+            ['h2bio', 'H2 Biology'], ['h2chem', 'H2 Chemistry'], ['h2clit', 'H2 Chinese Literature'], ['h2comp', 'H2 Computing'],
+            ['h2econs', 'H2 Economics'], ['h2fm', 'H2 Further Math'], ['h2geo', 'H2 Geography'], ['h2hist', 'H2 History'],
+            ['h2elit', 'H2 English Literature'], ['h2mlit', 'H2 Malay Literature'], ['h2math', 'H2 Math'], ['h2phy', 'H2 Physics'], ['h2tlit', 'H2 Tamil Literature']]
+        
+        for subject in subjects_data:
+            row = Subject(subj_abreviation=subject[0], subj_name=subject[1])
+            db.session.add(row)
+        db.session.commit()
+
+
     form = SubjectForm()
     if form.validate_on_submit():
         if form.validate_subject():
+            # delete previous subject
+            subjects_taken = current_user.subjects
+            for subject in subjects_taken:
+                db.session.delete(subject)
+
+            # add gp
+            gp = Subject.query.filter_by(subj_abreviation='h1gp').first()
+            gp_subject = StudentSubject(stu_id=current_user.id, subj_id=gp.id)
+            db.session.add(gp_subject)
+
+            # check fo mtl
+            if form.h1mtl.data != 'na':
+                mtl = Subject.query.filter_by(subj_abreviation=form.h1mtl.data).first()
+                student_mtl = StudentSubject(stu_id=current_user.id, subj_id=mtl.id)
+                db.session.add(student_mtl)
+
+            # add the rest of the subjects
+            selected_options = [form.subject_1.data, form.subject_2.data, form.subject_3.data, form.subject_4.data]
+            for option in selected_options:
+                subject = Subject.query.filter_by(subj_abreviation=option).first()
+                student_subject = StudentSubject(stu_id=current_user.id, subj_id=subject.id)
+                db.session.add(student_subject)
+
+            db.session.commit()  # commit changes
+
             flash("Subjects has been saved", "success")
             return redirect(url_for('home'))
         else:  # subjects are the same
