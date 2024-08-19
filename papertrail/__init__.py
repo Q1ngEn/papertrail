@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'e52751703579269d27d78a5b0957e6a6'
+app.config['SECRET_KEY'] = 'yes this is totally the secret key nothing weird about it'  # it is not
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///papertrail.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
